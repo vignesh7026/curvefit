@@ -1,0 +1,45 @@
+name: Uptime check
+
+# Pings the live site and API every 15 minutes. A failed run emails the repo's watchers, and
+# posts to the alert webhook if one is set. GitHub schedules can run a few minutes late, so for a
+# hard guarantee also add the same URLs to a dedicated uptime service.
+#
+# Set these repository secrets (Settings > Secrets and variables > Actions):
+#   UPTIME_URLS         one URL per line, e.g. https://shop.example.com and https://api.example.com/api/health
+#   ALERT_WEBHOOK_URL   optional, Slack-compatible incoming webhook (same one the API uses)
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check every URL
+        env:
+          UPTIME_URLS: ${{ secrets.UPTIME_URLS }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: |
+          if [ -z "$UPTIME_URLS" ]; then
+            echo "UPTIME_URLS is not set: nothing to check."
+            exit 0
+          fi
+          failed=""
+          while IFS= read -r url; do
+            [ -z "$url" ] && continue
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 --retry 2 --retry-delay 5 "$url" || echo "000")
+            echo "$code  $url"
+            case "$code" in
+              2*|3*) ;;
+              *) failed="$failed $url ($code)" ;;
+            esac
+          done <<< "$UPTIME_URLS"
+          if [ -n "$failed" ]; then
+            if [ -n "$ALERT_WEBHOOK_URL" ]; then
+              curl -s -X POST -H 'Content-Type: application/json' \
+                -d "{\"text\":\"[curvefit] DOWN:$failed\"}" "$ALERT_WEBHOOK_URL" || true
+            fi
+            echo "Failed:$failed"
+            exit 1
+          fi

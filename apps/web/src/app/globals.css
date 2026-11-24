@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Warm neutrals with one clay accent and a deep plum, kept deliberately quiet so
+ * the garments and the fit information do the talking. Change the brand here and it follows.
+ */
+@theme {
+  --color-bone: #f5efe6;
+  --color-card: #fbf8f2;
+  --color-sand: #e9dfd0;
+  --color-line: #dacfc0;
+  --color-ink: #1e1a17;
+  --color-muted: #675d55;
+  --color-clay: #a8452a;
+  --color-clay-dark: #86361f;
+  --color-plum: #4a2233;
+  --color-sage: #5d6b52;
+
+  /* Older class names used across the app point at the new palette. */
+  --color-paper: var(--color-bone);
+  --color-brand: var(--color-clay);
+  --color-brand-dark: var(--color-clay-dark);
+
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bone);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Underlined links read as links without needing a colour change. */
+.link {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.link:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* A small uppercase label, used sparingly above headings. */
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-clay);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-clay);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--color-plum);
+  color: var(--color-bone);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
