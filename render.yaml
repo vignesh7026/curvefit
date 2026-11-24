@@ -1,0 +1,49 @@
+# Render Blueprint for the API. Create it at https://dashboard.render.com/blueprint/new
+# Secrets marked `sync: false` are asked for in the dashboard and never stored in git.
+services:
+  - type: web
+    name: curvefit-api
+    runtime: node
+    region: singapore # closest Render region to Mumbai
+    plan: starter # free instances sleep after 15 minutes idle; use starter for a live shop
+    rootDir: .
+    # --include=dev: NODE_ENV=production would otherwise skip tsup. Only the API is built here;
+    # the storefront is deployed on Vercel.
+    buildCommand: npm ci --include=dev && npm run build -w @curvefit/api
+    startCommand: npm run start -w @curvefit/api
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      # The storefront URL (the Vercel production domain), no trailing slash.
+      - key: CORS_ORIGINS
+        sync: false
+      - key: WEB_URL
+        sync: false
+      # This service's own public URL, e.g. https://curvefit-api.onrender.com
+      - key: PUBLIC_API_URL
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_PUBLIC_BASE
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: ALERT_WEBHOOK_URL
+        sync: false

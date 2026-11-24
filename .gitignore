@@ -19,3 +19,5 @@ apps/api/.api.log
 apps/api/.data-e2e
 apps/api/.uploads-e2e
 apps/api/uploads
+
+.vercel
